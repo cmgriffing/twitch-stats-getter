@@ -1,30 +1,49 @@
 import * as fs from "fs-extra";
-import * as path from "path";
 import * as puppeteer from "puppeteer";
-import { ElementHandle, Page } from "puppeteer";
+import { ElementHandle } from "puppeteer";
 import * as glob from "glob";
-import * as yargs from "yargs";
+import yargs from "yargs";
 
-const { hideBin } = require("yargs/helpers");
-const argv = yargs(hideBin(process.argv))
-  .usage("Usage: $0 --o [filePath] ")
-  .demandOption(["o"])
-  .parse();
-
-if (!argv.o) {
-  console.log("No output path given.");
-  process.exit(-1);
+interface CliArgs {
+  c: string;
+  channel?: string;
+  o: string;
+  output?: string;
+  d: string;
+  downloads?: string;
 }
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const { hideBin } = require("yargs/helpers");
+const argv = (yargs(hideBin(process.argv))
+  .option("c", {
+    alias: "channel",
+    demandOption: true,
+    describe: "Your Twitch channel name.",
+    type: "string",
+  })
+  .option("d", {
+    alias: "downloads",
+    demandOption: true,
+    describe:
+      "This needs to be the directory your chrome downloads to by default.",
+    type: "string",
+  })
+  .option("o", {
+    alias: "output",
+    demandOption: true,
+    describe: "This is where you would like the csv file saved",
+    type: "string",
+  })
+  .parse() as unknown) as CliArgs;
 
-const analyticsUrl =
-  "https://dashboard.twitch.tv/u/cmgriffing/channel-analytics";
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const analyticsUrl = `https://dashboard.twitch.tv/u/${argv.c}/channel-analytics`;
 
 const loginHeaderPath = "//*[@class='auth-shell-header-header']";
 const exportDataButtonPath = "//*[contains(text(),'Export Data')]";
 
-const cookiesFilePath = "./cookies.json";
+// const cookiesFilePath = "./cookies.json";
 
 (async function() {
   try {
@@ -33,13 +52,13 @@ const cookiesFilePath = "./cookies.json";
     });
     let page = await browser.newPage();
 
-    const cookiesFileExists = await fs.pathExists(cookiesFilePath);
-    if (cookiesFileExists) {
-      const cookies = JSON.parse(
-        fs.readFileSync(cookiesFilePath, { encoding: "utf8" })
-      );
-      await page.setCookie(...cookies);
-    }
+    // const cookiesFileExists = await fs.pathExists(cookiesFilePath);
+    // if (cookiesFileExists) {
+    //   const cookies = JSON.parse(
+    //     fs.readFileSync(cookiesFilePath, { encoding: "utf8" })
+    //   );
+    //   await page.setCookie(...cookies);
+    // }
 
     await page.goto(analyticsUrl, {
       waitUntil: "networkidle2",
@@ -48,8 +67,6 @@ const cookiesFilePath = "./cookies.json";
     const loginHeader = await page.$x(loginHeaderPath).catch(() => {});
 
     if (loginHeader) {
-      // prompt user to login
-      // await page.bringToFront();
       await browser.close();
       browser = await puppeteer.launch({
         headless: false,
@@ -65,10 +82,10 @@ const cookiesFilePath = "./cookies.json";
       timeout: 120000,
     });
 
-    const currentCookies = await page.cookies();
-    if (currentCookies) {
-      fs.writeFileSync(cookiesFilePath, JSON.stringify(currentCookies));
-    }
+    // const currentCookies = await page.cookies();
+    // if (currentCookies) {
+    //   fs.writeFileSync(cookiesFilePath, JSON.stringify(currentCookies));
+    // }
 
     const buttons: ElementHandle<HTMLButtonElement>[] = await page.$x(
       exportDataButtonPath
@@ -78,10 +95,10 @@ const cookiesFilePath = "./cookies.json";
     await wait(20000);
 
     const downloadedFiles = glob.sync(
-      "/Users/cmgriffing/Downloads/Channel Analytics and Revenue by day from *.csv"
+      `${argv.d}/Channel Analytics and Revenue by day from *.csv`
     );
 
-    const sortedFiles = downloadedFiles.sort((fileA, fileB) => {
+    const sortedFiles = downloadedFiles.sort((fileA: string, fileB: string) => {
       const modifiedDateA = fs.statSync(fileA).mtimeMs;
       const modifiedDateB = fs.statSync(fileB).mtimeMs;
 

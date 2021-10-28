@@ -1,11 +1,14 @@
 {
   "name": "twitch-stats-getter",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
   "author": "Chris Griffing <cmgriffing@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node ./index.ts"
+    "dev": "ts-node ./index.ts",
+    "build": "tsc",
+    "dist": "node ./dist/index.js",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "fs-extra": "^10.0.0",
@@ -14,6 +17,8 @@
     "yargs": "^17.2.1"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/yargs": "^17.0.4",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   }

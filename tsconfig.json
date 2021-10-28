@@ -1,3 +1,11 @@
 {
-  "strict": true
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "strict": true
+  },
+  "include": ["src/*"],
+  "exclude": ["tests/*"]
 }
