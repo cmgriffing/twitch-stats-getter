@@ -4,6 +4,7 @@
   "main": "./dist/index.js",
   "author": "Chris Griffing <cmgriffing@gmail.com>",
   "license": "MIT",
+  "bin": "./dist/index.js",
   "scripts": {
     "dev": "ts-node ./index.ts",
     "build": "tsc",
