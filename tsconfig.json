@@ -6,6 +6,6 @@
     "outDir": "./dist",
     "strict": true
   },
-  "include": ["src/*"],
-  "exclude": ["tests/*"]
+  "include": ["./src/*"],
+  "exclude": ["./tests/*"]
 }
