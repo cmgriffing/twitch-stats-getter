@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as fs from "fs-extra";
 import * as puppeteer from "puppeteer";
 import { ElementHandle } from "puppeteer";
@@ -91,7 +93,7 @@ const analyticsUrl = `https://dashboard.twitch.tv/u/${argv.c}/channel-analytics`
 const loginHeaderPath = "//*[@class='auth-shell-header-header']";
 const exportDataButtonPath = "//*[contains(text(),'Export Data')]";
 
-// const cookiesFilePath = "./cookies.json";
+const cookiesFilePath = "./cookies.json";
 
 logger.extra("Initialized");
 
@@ -104,13 +106,13 @@ logger.extra("Initialized");
     let page = await browser.newPage();
     logger.extra("Page created.");
 
-    // const cookiesFileExists = await fs.pathExists(cookiesFilePath);
-    // if (cookiesFileExists) {
-    //   const cookies = JSON.parse(
-    //     fs.readFileSync(cookiesFilePath, { encoding: "utf8" })
-    //   );
-    //   await page.setCookie(...cookies);
-    // }
+    const cookiesFileExists = await fs.pathExists(cookiesFilePath);
+    if (cookiesFileExists) {
+      const cookies = JSON.parse(
+        fs.readFileSync(cookiesFilePath, { encoding: "utf8" })
+      );
+      await page.setCookie(...cookies);
+    }
 
     await page.goto(analyticsUrl, {
       waitUntil: "networkidle2",
@@ -145,10 +147,10 @@ logger.extra("Initialized");
 
     logger.extra("Found download button.");
 
-    // const currentCookies = await page.cookies();
-    // if (currentCookies) {
-    //   fs.writeFileSync(cookiesFilePath, JSON.stringify(currentCookies));
-    // }
+    const currentCookies = await page.cookies();
+    if (currentCookies) {
+      fs.writeFileSync(cookiesFilePath, JSON.stringify(currentCookies));
+    }
 
     const buttons: ElementHandle<HTMLButtonElement>[] = await page.$x(
       exportDataButtonPath

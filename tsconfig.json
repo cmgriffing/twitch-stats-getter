@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "strict": true
+    "strict": true,
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es6", "es2015", "dom"],
+    "declaration": false,
+    "rootDir": "src",
+    "types": ["node"]
   },
-  "include": ["./src/*"],
   "exclude": ["./tests/*"]
 }
