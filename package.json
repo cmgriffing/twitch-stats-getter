@@ -1,12 +1,12 @@
 {
   "name": "twitch-stats-getter",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "./dist/index.js",
   "author": "Chris Griffing <cmgriffing@gmail.com>",
   "license": "MIT",
   "bin": "./dist/index.js",
   "scripts": {
-    "dev": "ts-node ./index.ts",
+    "dev": "ts-node ./src/index.ts",
     "build": "tsc",
     "dist": "node ./dist/index.js",
     "postinstall": "npm run build"
